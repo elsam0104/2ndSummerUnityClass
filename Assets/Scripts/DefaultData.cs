@@ -65,6 +65,6 @@ public class DefaultData : ScriptableObject //대량의 데이터를 저장하는데 사용할 
         return getDataCnt();
     }
     public virtual void deleteData(int _pid) { }
-    public virtual void defullcateData(int _pid) { }
+    public virtual void defulicateData(int _pid) { }
 
 }

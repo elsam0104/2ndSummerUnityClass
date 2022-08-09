@@ -88,7 +88,7 @@ public class EffectXMLData : DefaultData
             }
         }
     }
-    public static T[] Add<T>(T[] idx,T _name)
+    public static T[] Add<T>(T[] idx,string _name)
     {
         ArrayList _tmpList = new ArrayList();
 
@@ -112,7 +112,7 @@ public class EffectXMLData : DefaultData
         }else
         {
             Add<string>(this.idx, _dataidx);
-            //Add<EffectAttr>(this.effectAttrs, _dataidx);
+            Add<EffectAttr>(this.effectAttrs, _dataidx);
 
             //ArrayList _tmpList = new ArrayList();
             //foreach (EffectAttr _val in this.effectAttrs)
@@ -159,7 +159,7 @@ public class EffectXMLData : DefaultData
         this.idx = null;
     }
 
-    public override void defullcateData(int _pid)
+    public override void defulicateData(int _pid)
     {
         ArrayList _tmpList = new ArrayList();
         foreach (string _val in this.idx)
