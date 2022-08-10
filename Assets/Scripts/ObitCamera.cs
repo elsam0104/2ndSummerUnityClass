@@ -39,8 +39,8 @@ public class ObitCamera : MonoBehaviour
 
     private Vector3 lerpPivotOffset;
     private Vector3 lerpCamOffset;
-    private Vector3 targetPivotOffset;
-    private Vector3 targetCamOffset;
+    private Vector3 targetPivotOffset; //타겟포착 범위
+    private Vector3 targetCamOffset; //
 
     private float lerpDefaultFOV;
     private float lerpTargetFOV;
@@ -152,11 +152,43 @@ public class ObitCamera : MonoBehaviour
         angleVertical = Mathf.Clamp(angleVertical,angleMinV,maxVerticaleAngleTartet);
 
         angleVertical = Mathf.LerpAngle(angleVertical, angleVertical + angleRecoil, 10 * Time.deltaTime);
-
+        //카메라 회전
         Quaternion camRotationY = Quaternion.Euler(0f, angleHorizontal, 0f);
         Quaternion aimRotation = Quaternion.Euler(-angleVertical, angleHorizontal, 0f);
         transformCamera.rotation = aimRotation;
 
+        fovCamera.fieldOfView = Mathf.Lerp(fovCamera.fieldOfView, lerpTargetFOV, Time.deltaTime);
+        //평상시
+        Vector3 posBaseTemp = charactorPlayer.position + camRotationY * targetPivotOffset;
+        Vector3 noCollisionOffset = targetCamOffset;
 
+        //조준시
+        //타겟이 플레이어한테로 다가옴
+        for(float offsetZ= targetCamOffset.z; offsetZ<=0f;offsetZ+=0.5f)
+        {
+            noCollisionOffset.z = offsetZ;
+            if(ckDoubleViewingPos(posBaseTemp+aimRotation*noCollisionOffset,Mathf.Abs(offsetZ))/*타겟이 보이지 않을 때*/||offsetZ==0f)//너무 가까울 때
+            {
+                break; //조준해제
+            }
+        }
+
+        lerpCamOffset = Vector3.Lerp(lerpCamOffset, noCollisionOffset, smooth * Time.deltaTime);
+        lerpPivotOffset = Vector3.Lerp(lerpPivotOffset, targetPivotOffset, smooth * Time.deltaTime);
+
+        transformCamera.position = charactorPlayer.position + camRotationY * lerpPivotOffset + aimRotation * lerpCamOffset;
+        //총 쏠때 반동
+        if(angleRecoil>0.0f)
+        {
+            angleRecoil -= angleBounceRecoil * Time.deltaTime;
+        }else if (angleRecoil<0.0f)
+        {
+            angleRecoil += angleBounceRecoil * Time.deltaTime;
+        }
+    }
+    //저격시 거리의 평균으로 나눠 부드럽게 움직이도록
+    public float getCurrentPivotMagnitude(Vector3 finalPivotOffset)
+    {
+        return Mathf.Abs((finalPivotOffset-lerpPivotOffset).magnitude);
     }
 }
