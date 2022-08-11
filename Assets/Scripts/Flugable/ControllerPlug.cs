@@ -38,10 +38,10 @@ public class ControllerPlug : MonoBehaviour
     //달리기 중인가?
     private bool flagRun;
     //애니메잇션 h,v축 값
-    private float hFloat;
-    private float vFloat;
+    private int hFloat;
+    private int vFloat;
     //땅 위에 붙어 있는가?
-    private bool flagOnGround;
+    private int flagOnGround;
     //땅과 충돌체크를 위한 충돌체 영역
     private Vector3 colliderGround;
 
@@ -56,6 +56,7 @@ public class ControllerPlug : MonoBehaviour
 
     private void Awake()
     {
+        playerTransform = transform;
         plugs = new List<BasePlugAble>();
         overridePlugs = new List<BasePlugAble>();
         playerAnimator = GetComponent<Animator>();
@@ -64,9 +65,9 @@ public class ControllerPlug : MonoBehaviour
         colliderGround = GetComponent<Collider>().bounds.extents; //범위 안에 들어왔는지
 
         //애니메이션에 달려있는거라 임시
-        hFloat = 0.0f;
-        vFloat = 0.0f;
-        flagOnGround = true;
+        hFloat = Animator.StringToHash("H");
+        vFloat = Animator.StringToHash("V");
+        flagOnGround = Animator.StringToHash("Grounded");
     }
 
     //플레이어가 이동중인가?
@@ -114,8 +115,8 @@ public class ControllerPlug : MonoBehaviour
     {
         h = Input.GetAxis("Horizontal");
         v = Input.GetAxis("Vertical");
-        playerAnimator.SetFloat((int)hFloat, h, 0.1f, Time.deltaTime);
-        playerAnimator.SetFloat((int)vFloat, v, 0.1f, Time.deltaTime);
+        playerAnimator.SetFloat(hFloat, h, 0.1f, Time.deltaTime);
+        playerAnimator.SetFloat(vFloat, v, 0.1f, Time.deltaTime);
         //나중에
         flagRun = Input.GetButtonDown("Jump");
 
@@ -300,7 +301,7 @@ public class ControllerPlug : MonoBehaviour
 public abstract class BasePlugAble : MonoBehaviour
 {
     //속도 구별 (걷고 달리는거 구별)
-    protected float spdFloat;
+    protected int spdFloat;
     protected ControllerPlug controllerPlug;
     //해쉬코드로 고유 코드 만들기
     protected int plugsCode;
@@ -312,6 +313,7 @@ public abstract class BasePlugAble : MonoBehaviour
         this.controllerPlug = GetComponent<ControllerPlug>();
         getFlagRun = true;
         //해쉬코드로 고유 코드 만들기
+        spdFloat = Animator.StringToHash("Speed");
         plugsCode = this.GetType().GetHashCode();
     }
 

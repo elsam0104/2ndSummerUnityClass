@@ -82,7 +82,9 @@ public class ObitCamera : MonoBehaviour
         //fov
         //angle
 
-
+        reatAimOffset();
+        restFOV();
+        restMaxVAnagle();
     }
     public void reatAimOffset()
     {
